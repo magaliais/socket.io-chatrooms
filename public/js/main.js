@@ -12,6 +12,12 @@ const socket = io();
 // Join chatroom
 socket.emit('joinRoom', { username, room } );
 
+// Get room and users
+socket.on('roomUsers', ({ room, users }) => {
+  outputRoomName(room);
+  outputUsers(users);
+});
+
 // Messages from server are handled here
 socket.on('message', message => {
   outputMessage(message);
@@ -53,32 +59,15 @@ function outputMessage({ username, text, time }) {
 
 
 
+// Add room name to DOM
+function outputRoomName(room) {
+  document.querySelector('#room-name').innerHTML = room;
+}
 
-
-
-
-
-
-
-
-// const msgBalloon = document.createElement('div');
-// msgBalloon.classList.add('message');
-
-// const msgInfo = document.createElement('p');
-// msgInfo.classList.add('meta');
-// msgInfo.innerHTML = 'User';
-
-// const msgInfoTime = document.createElement('span');
-// msgInfoTime.innerHTML = ' 9:10pm';
-// msgInfo.appendChild(msgInfoTime);
-
-
-// const messageText = document.createElement('p');
-// messageText.innerHTML = msg;
-// messageText.classList.add('text');
-
-
-// msgBalloon.appendChild(msgInfo);
-// msgBalloon.appendChild(messageText);
-
-// document.getElementsByClassName('chat-messages')[0].appendChild(msgBalloon);
+// Add users to DOM
+function outputUsers(users) {
+  const userList = document.querySelector('#users');
+  userList.innerHTML = `
+    ${users.map(user => `<li>${user.username}</li>`).join('')}
+  `;
+}
