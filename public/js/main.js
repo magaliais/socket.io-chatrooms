@@ -5,7 +5,7 @@ const socket = io();
 
 // Messages from server are handled here
 socket.on('message', message => {
-  console.log(message);
+  console.log(message.text);
   outputMessage(message);
 
   // Scroll down
@@ -29,13 +29,13 @@ chatForm.addEventListener('submit', e => {
 
 
 // Outputs the message to the chat with DOM
-function outputMessage(message) {
+function outputMessage({ username, text, time }) {
   const div = document.createElement('div');
   div.classList.add('message');
   div.innerHTML = `
-    <p class="meta">Brad <span>9:12pm</span></p>
+    <p class="meta">${username} <span>${time}</span></p>
     <p class="text">
-      ${message}
+      ${text}
     </p>
   `;
 
