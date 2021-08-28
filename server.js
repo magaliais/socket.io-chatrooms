@@ -14,6 +14,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+
 const botName = 'ChatRooms bot';
 
 // Set static folder (where things are located by default)
@@ -29,19 +30,22 @@ io.on('connection', socket => {
     socket.join(user.room);
 
     // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatRooms'));
+    socket.emit('message', formatMessage(botName, 'Bem-vindo ao ChatRooms'));
 
     // Broadcast to everyone IN A SPECIFIC ROOM [.to(user.room)] when a user connects
     // A broadcast emits to every client, except to the sender
     socket.broadcast
       .to(user.room)
-      .emit('message', formatMessage(botName,`${user.username} has joined the chat`));
+      .emit('message', formatMessage(botName,`${user.username} se juntou à sala`));
     
-    // Send users and room info
+    // Send users and room info to client
     io.to(user.room).emit('roomUsers', {
       room: user.room,
       users: getRoomUsers(user.room)
     });
+
+
+    // deals with events -------------------------------------------------------
 
     // Listen for chatMessage
     socket.on('chatMessage', (msg) => {
@@ -54,7 +58,7 @@ io.on('connection', socket => {
       const user = userLeave(socket.id);
 
       if(user) {
-        io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
+        io.to(user.room).emit('message', formatMessage(botName, `${user.username} deixou a sala`));
 
         // Send users and room info
         io.to(user.room).emit('roomUsers', {
